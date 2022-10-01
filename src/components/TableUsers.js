@@ -8,6 +8,7 @@ import { fetchAllUser } from '../services/UserService'
 
 import ReactPaginate from 'react-paginate';
 import { ToastContainer } from 'react-toastify';
+import ModalEditUser from './ModalEditUser';
 
 export default function TableUsers(props) {
 
@@ -15,6 +16,8 @@ export default function TableUsers(props) {
   const [totalUsers, setTotalUsers] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [isShowModalAddNew, setIsShowModalAddNew] = useState(false)
+  const [isShowModalAEdit, setIsShowModalEdit] = useState(false)
+  const [dataUsers, setDataUsers] = useState("")
   useEffect(() => {
     getUsers(1)
   }, [])
@@ -31,10 +34,14 @@ export default function TableUsers(props) {
 
     getUsers(+event.selected + 1)
   }
-  const handleUpdateUsers = (user) =>{
-    setListUsers([user,...listUsers])
+  const handleUpdateUsers = (user) => {
+    setListUsers([user, ...listUsers])
   }
+  const handleEdit = (user) => {
 
+    setIsShowModalEdit(true);
+    setDataUsers(user)
+  }
   return (
 
     <>
@@ -54,6 +61,8 @@ export default function TableUsers(props) {
             <th>Email</th>
             <th>First Name</th>
             <th>Last Name</th>
+            <th>Action</th>
+
           </tr>
         </thead>
         <tbody>
@@ -64,6 +73,13 @@ export default function TableUsers(props) {
                 <td>{item.email}</td>
                 <td>{item.first_name}</td>
                 <td>{item.last_name}</td>
+                <td>
+                  <button
+                    className="btn btn-success  me-3"
+                    onClick={() => handleEdit(item)}
+                  >Edit</button>
+                  <button className="btn btn-danger">Delete</button>
+                </td>
               </tr>)
             })
           }
@@ -90,7 +106,18 @@ export default function TableUsers(props) {
         containerClassName="pagination"
         activeClassName="active"
       />
-      <ModalAddNew show={isShowModalAddNew} handleClose={() => setIsShowModalAddNew(false)} handleUpdateUsers={handleUpdateUsers}/>
+      <ModalAddNew
+        show={isShowModalAddNew}
+        handleClose={() => setIsShowModalAddNew(false)}
+        handleUpdateUsers={handleUpdateUsers}
+      />
+
+      <ModalEditUser
+        show={isShowModalAEdit}
+        dataUsers={dataUsers}
+        handleClose={() => setIsShowModalEdit(false)}
+
+      />
 
       <ToastContainer
         position="top-right"
@@ -103,7 +130,7 @@ export default function TableUsers(props) {
         draggable
         pauseOnHover
       />
-      
+
     </>
   )
 }
