@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 
 import ModalAddNew from './ModalAddNew';
+import ModalEditUser from './ModalEditUser';
 
 import { fetchAllUser } from '../services/UserService'
 
 import ReactPaginate from 'react-paginate';
 import { ToastContainer } from 'react-toastify';
-import ModalEditUser from './ModalEditUser';
-
+import _ from 'lodash';
 export default function TableUsers(props) {
 
   const [listUsers, setListUsers] = useState([])
@@ -18,9 +18,11 @@ export default function TableUsers(props) {
   const [isShowModalAddNew, setIsShowModalAddNew] = useState(false)
   const [isShowModalAEdit, setIsShowModalEdit] = useState(false)
   const [dataUsers, setDataUsers] = useState("")
+
   useEffect(() => {
     getUsers(1)
   }, [])
+
   const getUsers = async (page) => {
     let res = await fetchAllUser(page);
     if (res && res.data) {
@@ -41,6 +43,14 @@ export default function TableUsers(props) {
 
     setIsShowModalEdit(true);
     setDataUsers(user)
+  }
+  const handlePutUsers = (user) => {
+
+    let index = listUsers.findIndex(item => item.id === user.id)
+    let cloneListUsers = _.cloneDeep(listUsers);
+    cloneListUsers[index].first_name = user.first_name;
+    setListUsers(cloneListUsers);
+   
   }
   return (
 
@@ -116,7 +126,7 @@ export default function TableUsers(props) {
         show={isShowModalAEdit}
         dataUsers={dataUsers}
         handleClose={() => setIsShowModalEdit(false)}
-
+        handlePutUsers={handlePutUsers}
       />
 
       <ToastContainer

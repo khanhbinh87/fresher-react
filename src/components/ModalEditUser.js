@@ -3,26 +3,31 @@ import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 
 
-// import { postAddUser } from "../services/UserService";
+import { putEditUser } from "../services/UserService";
 import { toast } from 'react-toastify';
 
 import Modal from "react-bootstrap/Modal";
 
 export default function ModalEditUser(props) {
-    const { show, handleClose, dataUsers } = props;
+    const { show, handleClose, dataUsers, handlePutUsers } = props;
     const [name, setName] = useState("");
     const [job, setJob] = useState("");
 
-    const handleEditUser = () => {
-        console.log(dataUsers);
-        toast.success('Edit successfully')
-        handleClose();
+    const handleEditUser = async () => {
+
+        let res = await putEditUser(name, job)
+        if (res && res.createdAt) {
+            handlePutUsers({ first_name: name, id: dataUsers.id })
+
+            toast.success('Edit successfully')
+            handleClose();
+        }
     }
     useEffect(() => {
         if (show) {
             setName(dataUsers.first_name)
         }
-    }, [dataUsers,show])
+    }, [dataUsers, show])
     return (
         <>
             <Modal show={show} onHide={handleClose}>
