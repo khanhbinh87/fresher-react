@@ -3,16 +3,28 @@
 import Button from "react-bootstrap/Button";
 
 
-// import { putEditUser } from "../services/UserService";
-// import { toast } from 'react-toastify';
+import { deleteUser } from "../services/UserService";
+import { toast } from 'react-toastify';
 
 import Modal from "react-bootstrap/Modal";
 
 export default function ModalConfirm(props) {
-    const { show, handleClose, dataUserDelete } = props;
-  
-    const handleDeleteUser = () => {
-        handleClose();
+    const { show, handleClose, dataUserDelete, handleDeleteUsers } = props;
+
+    const handleDeleteUser = async () => {
+
+        let res = await deleteUser(dataUserDelete.id)
+        console.log(res);
+        if (res && +res.statusCode === 204) {
+            handleDeleteUsers(dataUserDelete)
+            toast.success('Delete successfully')
+            handleClose();
+        }else{
+            toast.error('Delete failed')
+            handleClose();
+        }
+
+
     }
     return (
         <>

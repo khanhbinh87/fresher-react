@@ -59,11 +59,18 @@ export default function TableUsers(props) {
     setListUsers(cloneListUsers);
 
   }
-  const handleDeleteUser = (user) => {
+  const handleDelete = (user) => {
     setDataUsersDelete(user)
     setIsShowModalDelete(true)
   }
+  const handleDeleteUsers = (user) => {
+    let cloneListUsers = _.cloneDeep(listUsers);
 
+      cloneListUsers = cloneListUsers.filter(item =>  item.id !== user.id)
+   
+   
+    setListUsers(cloneListUsers);
+  }
   return (
 
     <>
@@ -102,7 +109,7 @@ export default function TableUsers(props) {
                   >Edit</button>
                   <button
                     className="btn btn-danger"
-                    onClick={() => handleDeleteUser(item)}
+                    onClick={() => handleDelete(item)}
                   >Delete</button>
                 </td>
               </tr>)
@@ -146,9 +153,10 @@ export default function TableUsers(props) {
       />
       <ModalConfirm
         handleClose={() => setIsShowModalDelete(false)}
-        show={isShowModalDelete} 
+        show={isShowModalDelete}
         dataUserDelete={dataUserDelete}
-        />
+        handleDeleteUsers={handleDeleteUsers}
+      />
 
 
       <ToastContainer

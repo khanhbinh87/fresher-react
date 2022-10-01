@@ -15,11 +15,14 @@ export default function ModalEditUser(props) {
 
     const handleEditUser = async () => {
 
-        let res = await putEditUser(name, job)
-        if (res && res.createdAt) {
+        let res = await putEditUser(dataUsers.id)
+        if (res && res.updatedAt) {
             handlePutUsers({ first_name: name, id: dataUsers.id })
 
             toast.success('Edit successfully')
+            handleClose();
+        }else{
+            toast.error('Edit failed')
             handleClose();
         }
     }
