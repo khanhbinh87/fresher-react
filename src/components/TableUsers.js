@@ -10,14 +10,21 @@ import { fetchAllUser } from '../services/UserService'
 import ReactPaginate from 'react-paginate';
 import { ToastContainer } from 'react-toastify';
 import _ from 'lodash';
+import ModalConfirm from './ModalConfirm';
 export default function TableUsers(props) {
 
   const [listUsers, setListUsers] = useState([])
-  const [totalUsers, setTotalUsers] = useState(0)
+
+  // const [totalUsers, setTotalUsers] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
+
   const [isShowModalAddNew, setIsShowModalAddNew] = useState(false)
-  const [isShowModalAEdit, setIsShowModalEdit] = useState(false)
+
+  const [isShowModalEdit, setIsShowModalEdit] = useState(false)
   const [dataUsers, setDataUsers] = useState("")
+
+  const [isShowModalDelete, setIsShowModalDelete] = useState(false)
+  const [dataUserDelete, setDataUsersDelete] = useState("")
 
   useEffect(() => {
     getUsers(1)
@@ -50,8 +57,13 @@ export default function TableUsers(props) {
     let cloneListUsers = _.cloneDeep(listUsers);
     cloneListUsers[index].first_name = user.first_name;
     setListUsers(cloneListUsers);
-   
+
   }
+  const handleDeleteUser = (user) => {
+    setDataUsersDelete(user)
+    setIsShowModalDelete(true)
+  }
+
   return (
 
     <>
@@ -88,7 +100,10 @@ export default function TableUsers(props) {
                     className="btn btn-success  me-3"
                     onClick={() => handleEdit(item)}
                   >Edit</button>
-                  <button className="btn btn-danger">Delete</button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDeleteUser(item)}
+                  >Delete</button>
                 </td>
               </tr>)
             })
@@ -120,14 +135,21 @@ export default function TableUsers(props) {
         show={isShowModalAddNew}
         handleClose={() => setIsShowModalAddNew(false)}
         handleUpdateUsers={handleUpdateUsers}
+
       />
 
       <ModalEditUser
-        show={isShowModalAEdit}
+        show={isShowModalEdit}
         dataUsers={dataUsers}
         handleClose={() => setIsShowModalEdit(false)}
         handlePutUsers={handlePutUsers}
       />
+      <ModalConfirm
+        handleClose={() => setIsShowModalDelete(false)}
+        show={isShowModalDelete} 
+        dataUserDelete={dataUserDelete}
+        />
+
 
       <ToastContainer
         position="top-right"
