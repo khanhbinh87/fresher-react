@@ -4,6 +4,7 @@ import Table from 'react-bootstrap/Table';
 
 import ModalAddNew from './ModalAddNew';
 import ModalEditUser from './ModalEditUser';
+import "./TableUsers.scss"
 
 import { fetchAllUser } from '../services/UserService'
 
@@ -26,6 +27,9 @@ export default function TableUsers(props) {
   const [isShowModalDelete, setIsShowModalDelete] = useState(false)
   const [dataUserDelete, setDataUsersDelete] = useState("")
 
+  const [sortBy, setSortBy] = useState('asc')
+  const [sortField, setSortField] = useState('id')
+
   useEffect(() => {
     getUsers(1)
   }, [])
@@ -39,6 +43,7 @@ export default function TableUsers(props) {
     }
     return res;
   }
+
   const handlePageClick = (event) => {
 
     getUsers(+event.selected + 1)
@@ -46,6 +51,7 @@ export default function TableUsers(props) {
   const handleUpdateUsers = (user) => {
     setListUsers([user, ...listUsers])
   }
+
   const handleEdit = (user) => {
 
     setIsShowModalEdit(true);
@@ -59,6 +65,7 @@ export default function TableUsers(props) {
     setListUsers(cloneListUsers);
 
   }
+
   const handleDelete = (user) => {
     setDataUsersDelete(user)
     setIsShowModalDelete(true)
@@ -66,10 +73,21 @@ export default function TableUsers(props) {
   const handleDeleteUsers = (user) => {
     let cloneListUsers = _.cloneDeep(listUsers);
 
-      cloneListUsers = cloneListUsers.filter(item =>  item.id !== user.id)
-   
-   
+    cloneListUsers = cloneListUsers.filter(item => item.id !== user.id)
+
+
     setListUsers(cloneListUsers);
+  }
+
+  const handleSort = (sortBy, sortField) => {
+    setSortBy(sortBy)
+    setSortField(sortField)
+
+    let cloneListUsers = _.cloneDeep(listUsers);
+
+    cloneListUsers = _.orderBy(cloneListUsers, [sortField], [sortBy]);
+    setListUsers(cloneListUsers);
+
   }
   return (
 
@@ -86,11 +104,42 @@ export default function TableUsers(props) {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Email</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Action</th>
+            <th className='d-flex justify-content-between sort-header'>
+              <span>
+                ID
+
+              </span>
+              <span>
+                <i
+                  className="fa-solid fa-arrow-down-long px-3"
+                  onClick={() => handleSort("desc", "id")}
+                ></i>
+                <i
+                  className="fa-solid fa-arrow-up-long"
+                  onClick={() => handleSort("asc", "id")}
+                ></i>
+
+              </span>
+            </th>
+            <th className='sort-header'>Email</th>
+            <th className='sort-header d-flex justify-content-between'>
+              <span>
+                First Name
+              </span>
+              <span>
+                <i
+                  className="fa-solid fa-arrow-down-long px-3"
+                  onClick={() => handleSort("desc", "first_name")}
+                ></i>
+                <i
+                  className="fa-solid fa-arrow-up-long"
+                  onClick={() => handleSort("asc", "first_name")}
+                ></i>
+
+              </span>
+            </th>
+            <th className='sort-header'>Last Name</th>
+            <th className='sort-header'>Action</th>
 
           </tr>
         </thead>
@@ -98,7 +147,7 @@ export default function TableUsers(props) {
           {
             listUsers && listUsers.length > 0 && listUsers.map((item, index) => {
               return (<tr key={`users-${index}`}>
-                <td>{item.id}</td>
+                <td>{item.id} </td>
                 <td>{item.email}</td>
                 <td>{item.first_name}</td>
                 <td>{item.last_name}</td>
@@ -112,6 +161,7 @@ export default function TableUsers(props) {
                     onClick={() => handleDelete(item)}
                   >Delete</button>
                 </td>
+
               </tr>)
             })
           }
